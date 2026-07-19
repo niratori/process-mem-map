@@ -35,7 +35,7 @@ def mapear_memoria(pid):
     mbi = MEMORY_BASIC_INFORMATION()
     
     # IMPORTANTE: Definimos o endereço inicial como um "Ponteiro Vazio" (void pointer)
-    # Isso evita o erro de Overflow no Python 64-bit
+    # Isso evita um erro de Overflow no Python 64-bit
     endereco_atual = ctypes.c_void_p(0)
 
     print(f"\n>>> Mapa de Memória do PID: {pid} <<<")
@@ -54,19 +54,19 @@ def mapear_memoria(pid):
             
             tamanho_kb = mbi.RegionSize // 1024
             
-            # Formatando o endereço para hex de 12 dígitos (Padrão x64)
+            # Aqui formatamos o endereço para hex de 12 dígitos (Padrão x64)
             addr = mbi.BaseAddress if mbi.BaseAddress else 0
             print(f"0x{addr:012X} | {tamanho_kb:<12} | {status}")
 
-        # Atualizando o endereço para a próxima região
-        # A conta precisa ser feita em inteiro e depois convertida de volta para ponteiro
+        # Atualizando o endereço pra próxima região
+        # A conta deve ser feita em inteiro e depois convertida de volta para ponteiro
         novo_endereco = (mbi.BaseAddress or 0) + mbi.RegionSize
         endereco_atual = ctypes.c_void_p(novo_endereco)
 
     ctypes.windll.kernel32.CloseHandle(handle)
 
 # --- TESTE ---
-alvo = "notepad.exe" # Abre o bloco de notas antes!
+alvo = "notepad.exe" # Tem que abrir o bloco de notas antes!
 pid = achar_id_do_processo(alvo)
 
 if pid:
